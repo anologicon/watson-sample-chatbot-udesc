@@ -8,7 +8,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static('./public'));
 
-const port = 3000;
+
+var port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 
 const assistant = new AssistantV1({
   username: process.env.ASSISTANT_USERNAME,
