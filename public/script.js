@@ -17,6 +17,8 @@ const InsertTemplateInTheChat = (template) => {
   div.innerHTML = template;
 
   chat.appendChild(div);
+
+  document.getElementById('chat').scrollBy(0, 10000000000000)
 };
 
 // Calling server and get the watson output
