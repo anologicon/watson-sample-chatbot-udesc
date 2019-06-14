@@ -34,4 +34,18 @@ app.post('/conversation/', (req, res) => {
   });
 });
 
+app.get('/entities/', (req, res) => {
+
+  const params = {
+    workspace_id: process.env.WORKSPACE_ID,
+    entity:'sys-date'
+  };
+
+  assistant.listValues(params, (err, response) => {
+    if (err) res.status(500).json(err);
+
+    res.json(response);
+  });
+});
+
 app.listen(port, () => console.log(`Running on port ${port}`));

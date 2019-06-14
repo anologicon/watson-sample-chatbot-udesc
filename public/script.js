@@ -34,6 +34,13 @@ const getWatsonMessageAndInsertTemplate = async (text = '') => {
     }),
   })).json();
 
+  const responseEntities = await (await fetch('/entities/', {
+    method: 'GET',
+  })).json();
+
+  console.log(responseEntities);
+
+
   context = response.context;
 
   const template = templateChatMessage(response.output.text, 'watson');
