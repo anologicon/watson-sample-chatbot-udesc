@@ -38,7 +38,7 @@ app.get('/entities/', (req, res) => {
 
   const params = {
     workspace_id: process.env.WORKSPACE_ID,
-    entity:'sys-date'
+    entity:'descricao'
   };
 
   assistant.listValues(params, (err, response) => {

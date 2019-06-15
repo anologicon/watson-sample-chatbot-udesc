@@ -3,6 +3,13 @@ const chat = document.getElementById('chat');
 
 let context = {};
 
+var lembretes = [{}];
+
+var lembreteAtual = 0;
+var ultima = 0;
+var cadastrandoLembrete = false;
+var contexto = '';
+
 const templateChatMessage = (message, from) => `
   <div class="from-${from}">
     <div class="message-inner">
@@ -34,18 +41,62 @@ const getWatsonMessageAndInsertTemplate = async (text = '') => {
     }),
   })).json();
 
-  const responseEntities = await (await fetch('/entities/', {
-    method: 'GET',
-  })).json();
-
-  console.log(responseEntities);
-
-
   context = response.context;
 
-  const template = templateChatMessage(response.output.text, 'watson');
+  console.log(context);
 
-  InsertTemplateInTheChat(template);
+  intent = response.intents[0];
+
+  if (context.finalizado !== true) {
+    cadastrandoLembrete = true
+  } else {
+    cadastrandoLembrete = false
+  }
+
+  if (intent) {
+    contexto = intent.intent
+  }
+
+  var lembrete = lembretes[lembreteAtual];
+
+  if (contexto == 'cadastrar-lembrete' ) {
+    if (cadastrandoLembrete == true) {
+      lembrete.data = context.data;
+      lembrete.tipoLembrete = context.tipoLembrete;
+      lembrete.time = context.time;
+
+    } else {
+      if (lembrete.descricao == undefined) {
+        lembrete.descricao = context.descricao;
+      }
+      lembreteAtual++
+      lembretes.push({});
+      contexto = undefined;
+    }
+  }
+
+  if (contexto == 'recuperar-lembrete') {
+
+    var template = '';
+
+    console.log(lembretes);
+    lembretes.forEach((element) => {
+      if(element.data !== undefined) {
+
+        template += `- Você tem ${element.tipoLembrete} dia ${element.data} as ${element.time} sobre ${element.descricao} <br>`;
+      }
+    });
+
+    const templateLI = templateChatMessage(template, 'watson');
+
+    InsertTemplateInTheChat(templateLI);
+
+    return true;
+  }
+
+  const templateNormal = templateChatMessage(response.output.text, 'watson');
+
+  InsertTemplateInTheChat(templateNormal);
 };
 
 textInput.addEventListener('keydown', (event) => {
